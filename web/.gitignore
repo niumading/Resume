@@ -1,0 +1,23 @@
+node_modules
+dist
+dist-ssr
+*.tsbuildinfo
+.DS_Store
+*.local
+.vite
+.playwright-mcp
+*.log
+
+# 作品媒体：只挡体积大的视频，图片（板块封面 + 详情页配图）全部入库，
+# 否则详情页引用的 /works/<slug>/*.jpg 在部署后会 404 变破图。
+public/works/**/*.mp4
+public/works/**/*.webm
+public/works/**/*.mov
+public/works/**/*.m4v
+
+# 压缩脚本日志
+scripts/compress-media.log
+
+# 本地工具与部署产物（含本地路径/服务器信息，不入库）
+.claude/
+deploy/

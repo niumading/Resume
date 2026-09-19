@@ -1,0 +1,61 @@
+# NOTICE — What is and isn't covered by the MIT License
+
+## Code — MIT
+
+The **code** in this repository (the React Three Fiber setup, components,
+scroll-driven camera, post-processing pipeline, works content system, etc.) is
+under the MIT License (see [`LICENSE`](LICENSE)).
+
+The code is derived from **sen-3d-resume** by **Sen Zheng (SEN)**
+(<https://github.com/dayinji/sen-3d-resume>), which is MIT-licensed. The original
+copyright notice is retained in `LICENSE`.
+
+## Personal content of this repository — not covered by MIT
+
+This repository is also a real personal portfolio. The content below is
+© 2026 Xiaoding (丁小风), all rights reserved. It is **not** licensed under MIT
+and may not be reused, redistributed, or repurposed without permission.
+
+- **Name & likeness** — the 3D character model `web/public/models/me.glb`
+  (generated from the author's own photo), and the résumé / About copy.
+- **Résumé data** — `web/src/ui/Resume.tsx`.
+- **Work content** — `web/src/data/works.ts`, `web/src/data/workDocs.ts`,
+  `web/src/content/works/*.md`, and the images under `web/public/works/`.
+
+## Content removed from the upstream project
+
+Everything personal belonging to the upstream author was removed before this
+fork was published, including his 3D character model, his Blender source file,
+his brand logos and images, his social profile links, and his preview
+screenshot. **None of it is distributed in this repository.**
+
+## Third-party assets — verify their own licenses before reuse
+
+These are not the author's to sublicense; confirm each source's terms before
+redistributing:
+
+- **Fonts** — `web/public/fonts/` Cormorant Upright and Mansalva (Google Fonts,
+  SIL Open Font License). Bundled per the OFL; keep their licenses if you ship
+  them.
+- **`web/public/textures/env.hdr`** — HDR environment map. Confirm the source's
+  license before reuse.
+
+---
+
+## 简要说明（中文）
+
+本仓库的**代码**采用 **MIT** 许可（见 [`LICENSE`](LICENSE)），欢迎学习与复用。
+代码部分源自 Sen Zheng 的开源项目 **sen-3d-resume**
+（<https://github.com/dayinji/sen-3d-resume>，MIT），原始版权声明已保留在 `LICENSE` 中。
+
+但本仓库同时是作者本人的作品集，以下**个人内容与素材**版权归 Xiaoding（丁小风）所有，
+**不在 MIT 授权范围内**，请勿直接复用：
+
+- 姓名与肖像：由本人照片生成的 3D 人物模型 `web/public/models/me.glb`，以及首屏文案
+- 简历数据（`web/src/ui/Resume.tsx`）
+- 作品文案与配图（`web/src/data/works.ts`、`web/src/content/works/*.md`、`web/public/works/`）
+
+**上游作者（Sen Zheng）的个人内容与素材已全部移除**，包括其 3D 人物模型、Blender 源文件、
+品牌 logo 与图片、社交主页链接、预览截图 —— 本仓库不分发其中任何一项。
+
+字体、HDR 等第三方素材请各自核对其原始许可后再分发。

@@ -1,0 +1,16 @@
+programmer
+designer
+product-manager
+doctor
+teacher
+lawyer
+finance
+marketing
+photographer
+musician
+writer
+scientist
+architect
+chef
+entrepreneur
+freelancer
