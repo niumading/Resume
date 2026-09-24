@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState, type Ref } from 'react'
+import { createPortal } from 'react-dom'
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import rehypeRaw from 'rehype-raw'
 import { WORKS, SECTION_COVERS, type WorkListItem, type WorkSection, type WorksLang } from '../data/works'
-import { getWorkDoc } from '../data/workDocs'
+import { getWorkDoc, MAX_PHOTOS } from '../data/workDocs'
 
 const EASE = [0.22, 1, 0.36, 1]
 
@@ -254,6 +255,9 @@ function WorkDetail({
   onZoom: (src: string, title: string) => void
 }) {
   const [bannerError, setBannerError] = useState(false)
+  // 逐张记录加载失败的截图：图还没放进 public/works/<slug>/ 时，
+  // 宁可少渲染一张，也不要留一个破图占位。全失败就整段不渲染。
+  const [photoError, setPhotoError] = useState<Record<number, boolean>>({})
   const doc = getWorkDoc(item.slug)
   const title = (doc && doc.title) || item.name
   const banner = doc && doc.banner
@@ -262,6 +266,11 @@ function WorkDetail({
   const tags = doc ? doc.tags || item.tags : null
   // 副标题不含年份；标签单独做 badge 展示
   const sub = doc ? [item.meta, doc.role].filter(Boolean).join('  ·  ') : ''
+  // 作品照片：最多 MAX_PHOTOS 张，坏图剔掉后仍为空则不渲染这一段
+  const photos = (doc?.photos ?? [])
+    .slice(0, MAX_PHOTOS)
+    .map((src, i) => ({ src, i }))
+    .filter((p) => !photoError[p.i])
 
   return (
     <>
@@ -343,6 +352,28 @@ function WorkDetail({
                 {data.phButtonLabel} <span aria-hidden="true">↗</span>
               </span>
             </>
+          )}
+
+          {/* 作品照片带：最多 3 张，点开走已有的全屏放大层（z-index 高于详情层） */}
+          {photos.length > 0 && (
+            <div className="wk-detail-photos">
+              {photos.map((p) => (
+                <button
+                  key={p.src}
+                  type="button"
+                  className="wk-detail-photo"
+                  onClick={() => onZoom(p.src, `${title} · ${p.i + 1}`)}
+                  aria-label={`${data.zoomLabel}${title} ${p.i + 1}`}
+                >
+                  <img
+                    src={p.src}
+                    alt={`${title} ${p.i + 1}`}
+                    loading="lazy"
+                    onError={() => setPhotoError((s) => ({ ...s, [p.i]: true }))}
+                  />
+                </button>
+              ))}
+            </div>
           )}
 
           {link && (
@@ -502,51 +533,63 @@ export default function Works({ lang, innerRef }: { lang: 'en' | 'zh'; innerRef:
         </div>
       </div>
 
-      {/* 点击复制反馈：底部居中的胶囊提示，位置固定、不参与卡片布局 */}
-      <AnimatePresence>
-        {copied && (
-          <motion.div
-            key={copied}
-            className="wk-toast"
-            role="status"
-            aria-live="polite"
-            initial={{ opacity: 0, y: 14, scale: 0.96 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 8, scale: 0.98 }}
-            transition={{ duration: 0.22, ease: EASE }}
-          >
-            <span className="wk-toast-tick" aria-hidden="true">
-              ✓
-            </span>
-            <span className="wk-toast-label">{data.copiedLabel}</span>
-            <span className="wk-toast-val">{copied}</span>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* ⚠️ 三层弹层（toast / 放大预览 / 作品详情）必须 createPortal 到 body。
+          原因是个层叠上下文陷阱：本组件挂在 section.works 下，而 .works 是
+          position:relative + z-index:10 —— 这会新建一个层叠上下文，把后代全部关在里面。
+          于是 .wk-detail 写多少 z-index（哪怕 101）都翻不过 body 直属的 NoiseOverlay（z-index:100），
+          全屏 multiply 胶片噪点照样盖在详情页的截图上，白底 UI 图被糊成「麻点」。
+          portal 出去后 z-index 才在根层叠上下文里真正生效：
+          backdrop(65) < noise(100，四周页面保留颗粒) < detail(101) < zoom(102) < toast(103)。 */}
+      {createPortal(
+        <>
+          {/* 点击复制反馈：底部居中的胶囊提示，位置固定、不参与卡片布局 */}
+          <AnimatePresence>
+            {copied && (
+              <motion.div
+                key={copied}
+                className="wk-toast"
+                role="status"
+                aria-live="polite"
+                initial={{ opacity: 0, y: 14, scale: 0.96 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: 8, scale: 0.98 }}
+                transition={{ duration: 0.22, ease: EASE }}
+              >
+                <span className="wk-toast-tick" aria-hidden="true">
+                  ✓
+                </span>
+                <span className="wk-toast-label">{data.copiedLabel}</span>
+                <span className="wk-toast-val">{copied}</span>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
-      <AnimatePresence>
-        {zoomed && (
-          <CoverZoom
-            key={zoomed.src}
-            src={zoomed.src}
-            title={zoomed.title}
-            data={data}
-            onClose={() => setZoomed(null)}
-          />
-        )}
-      </AnimatePresence>
+          <AnimatePresence>
+            {zoomed && (
+              <CoverZoom
+                key={zoomed.src}
+                src={zoomed.src}
+                title={zoomed.title}
+                data={data}
+                onClose={() => setZoomed(null)}
+              />
+            )}
+          </AnimatePresence>
 
-      <AnimatePresence>
-        {active && (
-          <WorkDetail
-            key={active.slug || active.name}
-            item={active}
-            data={data}
-            onClose={() => setActive(null)}
-            onZoom={(src, title) => setZoomed({ src, title })}
-          />
-        )}
-      </AnimatePresence>
+          <AnimatePresence>
+            {active && (
+              <WorkDetail
+                key={active.slug || active.name}
+                item={active}
+                data={data}
+                onClose={() => setActive(null)}
+                onZoom={(src, title) => setZoomed({ src, title })}
+              />
+            )}
+          </AnimatePresence>
+        </>,
+        document.body
+      )}
     </section>
   )
 }

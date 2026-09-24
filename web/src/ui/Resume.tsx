@@ -14,6 +14,9 @@ interface ResumeGroup {
   link?: string
   items?: string[]
   links?: { id: string; label: string; href: string }[]
+  // 主题名用重点色（--accent）渲染。按条开关：只给「项目」类分组开，
+  // 像「期望岗位」这类信息型分组保持米白，避免整页到处是金色。
+  accent?: boolean
 }
 interface ResumeEntry {
   period: string
@@ -55,9 +58,28 @@ const RESUME: Record<'en' | 'zh', { title: string; entries: ResumeEntry[] }> = {
           {
             heading: 'ERP / WMS document automation middle layer',
             sub: 'designed & shipped 0 → 1',
+            accent: true,
             items: [
               'Replaced manual line-by-line entry of paper documents into ERP',
               'Automated return-order creation end to end',
+            ],
+          },
+          {
+            heading: 'Infinite Canvas',
+            sub: 'open-source base; internal version built and maintained by me',
+            accent: true,
+            items: [
+              'Runs locally for staff; aggregates Jimeng CLI / local ComfyUI / ModelScope',
+              'Added mannequin export endpoint & local short-drama service',
+            ],
+          },
+          {
+            heading: 'RAG Knowledge Base · personal knowledge Q&A',
+            sub: 'local-first, answers trace back to source',
+            accent: true,
+            items: [
+              'Every answer carries original-text citations; states "unknown" when evidence is insufficient',
+              'SQLCipher-encrypted store; cloud inference needs per-document opt-in of minimal passages',
             ],
           },
         ],
@@ -105,7 +127,26 @@ const RESUME: Record<'en' | 'zh', { title: string; entries: ResumeEntry[] }> = {
           {
             heading: 'ERP / WMS 制单自动化中间层',
             sub: '从 0 到 1 设计并上线',
+            accent: true,
             items: ['替代纸质单据人工逐行录入 ERP', '退货单自动制作，流程打通'],
+          },
+          {
+            heading: '无限画布',
+            sub: '基于开源底座，由我独立改造并维护',
+            accent: true,
+            items: [
+              '面向公司员工本地运行，聚合即梦 CLI / 本地 ComfyUI / ModelScope',
+              '新增白模导出接口与本地短剧服务',
+            ],
+          },
+          {
+            heading: 'RAG 知识库 · 个人知识问答',
+            sub: '本地优先，答案可回溯原文',
+            accent: true,
+            items: [
+              '每条回答附原文引用，依据不足时明确回答「不知道」',
+              'SQLCipher 加密存储，云端推理需按资料逐份授权最小片段',
+            ],
           },
         ],
       },
@@ -139,12 +180,18 @@ const itemV = {
 }
 
 function Group({ group }: { group: ResumeGroup }) {
+  const cls = group.accent ? 'is-accent' : undefined
   const heading = group.link ? (
-    <a className="about-link" href={group.link} target="_blank" rel="noopener noreferrer">
+    <a
+      className={cls ? `about-link ${cls}` : 'about-link'}
+      href={group.link}
+      target="_blank"
+      rel="noopener noreferrer"
+    >
       {group.heading}
     </a>
   ) : (
-    <span>{group.heading}</span>
+    <span className={cls}>{group.heading}</span>
   )
 
   return (

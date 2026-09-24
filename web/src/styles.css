@@ -9,6 +9,10 @@
   --ink-hero: #3a2419;
   --ink-hero-soft: rgba(58, 36, 25, 0.78);
   --ink-hero-faint: rgba(58, 36, 25, 0.46);
+  /* 履历区重点色：与 sky 背景的 accent（#ffd166 阳光金）同色。
+     履历区背景被 .scrim 压暗，金色在上面对比度足够；别再往亮调（会刺眼），
+     也别换冷色（和暖金背景打架）。 */
+  --accent: #ffd166;
   font-family: 'Helvetica Neue', 'Chiron GoRound TC', 'PingFang SC', 'Microsoft YaHei', system-ui, sans-serif;
 }
 
@@ -493,6 +497,12 @@ canvas {
   font-size: clamp(15px, 1.9vw, 19px);
   font-weight: 600;
   color: var(--ink);
+}
+
+/* 项目主题名标重点色（ResumeGroup.accent 打开才有，属按条开关，不是全局样式）。
+   只染 heading 本身，不染 .tl-group-sub —— 副标题仍是米白，层次才分得开。 */
+.tl-group-head .is-accent {
+  color: var(--accent);
 }
 
 /* 自媒体头像 logo */
@@ -1230,7 +1240,7 @@ a.wk-line-btn.is-link {
   max-width: min(90vw, 560px);
   margin-left: auto;
   margin-right: auto;
-  z-index: 90; /* 高于详情层(70)与放大预览层(80)，任何状态下都能看见 */
+  z-index: 103; /* 高于详情层(101)与放大预览层(102)，也高于噪点层(100)，任何状态下都能看见 */
   display: flex;
   align-items: center;
   gap: 0.6em;
@@ -1320,7 +1330,11 @@ a.wk-line-btn.is-link {
 .wk-detail {
   position: fixed;
   inset: clamp(16px, 5vh, 56px) clamp(16px, 6vw, 120px);
-  z-index: 70;
+  /* ⚠️ 必须 > NoiseOverlay 的 100：那是全屏 mix-blend-mode:multiply 的胶片噪点层，
+     盖在它下面的任何图层都会糊上一层「麻点」—— 详情页里的截图（尤其白底 UI 图）
+     会被压得又灰又花。抬到 101 后详情页整体干净，四周页面仍保留颗粒。
+     原有层级关系不变：backdrop(65) < detail(101) < zoom(102) < toast(103) < lang-toggle(110)。 */
+  z-index: 101;
   /* 指定背景色 #1d2124（深炭蓝灰） */
   background: rgba(29, 33, 36, 0.98);
   border: 1px solid var(--line);
@@ -1377,7 +1391,8 @@ a.wk-line-btn.is-link {
 .wk-zoom {
   position: fixed;
   inset: 0;
-  z-index: 80;
+  /* 同上：放大预览是「看原图」的地方，绝不能带噪点层，必须 > 100 且 > 详情层(101) */
+  z-index: 102;
   display: grid;
   place-items: center;
   padding: clamp(24px, 5vh, 64px) clamp(20px, 4vw, 72px);
@@ -1670,6 +1685,54 @@ button.wk-detail-banner:focus-visible img {
   background: none;
   font-size: 0.86em;
   white-space: pre;
+}
+
+/* 作品照片带（详情页正文末尾，每个项目最多 3 张）。
+   用 object-fit:contain 而不是 cover —— 这里放的多是界面截图，
+   裁掉边缘就等于丢信息（和 bannerFit:natural 同一个道理）。
+   深色衬底 + 圆角让图在页面上有边界感。 */
+.wk-detail-photos {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: clamp(26px, 4vh, 40px);
+}
+
+.wk-detail-photo {
+  display: block;
+  width: 100%;
+  padding: 0;
+  aspect-ratio: 3 / 2;
+  border: 0.5px solid var(--line);
+  border-radius: 12px;
+  overflow: hidden;
+  background: rgba(244, 241, 234, 0.05);
+  cursor: zoom-in;
+  transition: border-color 0.25s ease;
+}
+
+.wk-detail-photo:hover,
+.wk-detail-photo:focus-visible {
+  border-color: var(--accent);
+}
+
+.wk-detail-photo img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* 窄屏：3 列会挤成每条 100px 左右，字都看不清 —— 改成竖排单列放大 */
+@media (max-width: 640px) {
+  .wk-detail-photos {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .wk-detail-photo {
+    aspect-ratio: 16 / 10;
+  }
 }
 
 /* 访问外链按钮 */

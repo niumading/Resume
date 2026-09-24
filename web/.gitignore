@@ -8,6 +8,9 @@ dist-ssr
 .playwright-mcp
 *.log
 
+# vite 启动时生成的配置临时文件（形如 vite.config.ts.timestamp-<数字>-<hash>.mjs）
+vite.config.ts.timestamp-*.mjs
+
 # 作品媒体：只挡体积大的视频，图片（板块封面 + 详情页配图）全部入库，
 # 否则详情页引用的 /works/<slug>/*.jpg 在部署后会 404 变破图。
 public/works/**/*.mp4

@@ -89,34 +89,22 @@ export const WORKS: Record<'zh' | 'en', WorksLang> = {
       {
         id: 'ad',
         no: '01',
-        title: '制单自动化',
-        tagline: 'ERP / WMS 中间层',
+        title: '作品集',
+        tagline: '3 个真实落地的项目',
         coverFit: 'contain',
         items: [
-          { name: '纸质单据自动录入 ERP', meta: 'Python · 图像识别', slug: 'erp-entry' },
-          { name: '退货单自动制作', meta: 'Python · 批量单据', slug: 'return-order' },
           {
-            name: '单据校验与异常回退',
-            meta: 'github.com/niumading/Warehouse-automation-tools',
-            link: 'https://github.com/niumading/Warehouse-automation-tools',
+            name: 'ERP / WMS 制单自动化中间层',
+            meta: 'Python · FastAPI · PostgreSQL',
+            slug: 'erp-wms',
           },
-        ],
-      },
-      {
-        id: 'maker',
-        no: '02',
-        title: 'AI 提效',
-        tagline: 'Python · LangChain · RAG',
-        coverFit: 'portrait',
-        items: [
-          { name: 'RAG 知识库', meta: 'Milvus · 向量检索', slug: 'rag-kb' },
-          { name: 'LangGraph 流程编排', meta: 'StateGraph · 双节点', slug: 'langgraph-flow' },
-          { name: '报表与文档自动化', meta: 'XLSX 读写 · 批量导出', slug: 'doc-automation' },
+          { name: '无限画布', meta: 'Python · 本地部署 · 二次开发', slug: 'infinite-canvas' },
+          { name: 'RAG 知识库', meta: 'FastAPI · Milvus · SQLCipher', slug: 'rag-kb' },
         ],
       },
       {
         id: 'product',
-        no: '03',
+        no: '02',
         title: '毛茸茸的朋友',
         tagline: '稳 · 伴 · 乐',
         coverFit: 'portrait',
@@ -128,7 +116,7 @@ export const WORKS: Record<'zh' | 'en', WorksLang> = {
       },
       {
         id: 'graphics',
-        no: '04',
+        no: '03',
         title: '联系方式',
         tagline: '上海 · 期待交流',
         items: [
@@ -168,38 +156,22 @@ export const WORKS: Record<'zh' | 'en', WorksLang> = {
       {
         id: 'ad',
         no: '01',
-        title: 'Document Automation',
-        tagline: 'ERP / WMS middle layer',
+        title: 'Portfolio',
+        tagline: 'three real, shipped projects',
         coverFit: 'contain',
         items: [
-          { name: 'Automatic paper-document entry into ERP', meta: 'Python · OCR', slug: 'erp-entry' },
-          { name: 'Return-order auto generation', meta: 'Python · batch documents', slug: 'return-order' },
           {
-            name: 'Document validation & rollback',
-            meta: 'github.com/niumading/Warehouse-automation-tools',
-            link: 'https://github.com/niumading/Warehouse-automation-tools',
+            name: 'ERP / WMS document automation middle layer',
+            meta: 'Python · FastAPI · PostgreSQL',
+            slug: 'erp-wms',
           },
-        ],
-      },
-      {
-        id: 'maker',
-        no: '02',
-        title: 'AI Productivity',
-        tagline: 'Python · LangChain · RAG',
-        coverFit: 'portrait',
-        items: [
-          { name: 'RAG knowledge base', meta: 'Milvus · vector store', slug: 'rag-kb' },
-          {
-            name: 'LangGraph workflow orchestration',
-            meta: 'StateGraph · two nodes',
-            slug: 'langgraph-flow',
-          },
-          { name: 'Report & document automation', meta: 'XLSX I/O · batch export', slug: 'doc-automation' },
+          { name: 'Infinite Canvas', meta: 'Python · local deploy · open-source fork', slug: 'infinite-canvas' },
+          { name: 'RAG knowledge base', meta: 'FastAPI · Milvus · SQLCipher', slug: 'rag-kb' },
         ],
       },
       {
         id: 'product',
-        no: '03',
+        no: '02',
         title: 'Furry Friends',
         tagline: 'Steady · Loyal · Joy',
         coverFit: 'portrait',
@@ -211,7 +183,7 @@ export const WORKS: Record<'zh' | 'en', WorksLang> = {
       },
       {
         id: 'graphics',
-        no: '04',
+        no: '03',
         title: 'Contact',
         tagline: 'Shanghai · Say hello',
         items: [
@@ -238,9 +210,10 @@ export const WORKS: Record<'zh' | 'en', WorksLang> = {
 // 板块配图（横向画廊每张卡片左侧的整高封面）。放到 public/works/covers/ 下。
 // 缺图时左栏用大编号渐变占位，放入图片后自动点亮。
 // ⚠️ 现有 4 张 jpg 是原作者的个人素材（不在 MIT 范围内），上线前请替换成自己的图。
+// 09-24 起板块 02「AI 提效」整块已删，`maker` 取图键一并摘掉
+//（`covers/maker.jpg` 文件仍留在磁盘上，板块若要回来直接把它加回来即可）。
 export const SECTION_COVERS: Record<string, string> = {
   ad: `${import.meta.env.BASE_URL}works/covers/ad.jpg`,
-  maker: `${import.meta.env.BASE_URL}works/covers/maker.jpg`,
   product: `${import.meta.env.BASE_URL}works/covers/product.jpg`,
   graphics: `${import.meta.env.BASE_URL}works/covers/graphics.jpg`,
 }

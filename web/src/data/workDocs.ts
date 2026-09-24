@@ -8,6 +8,10 @@
 //   role    角色 / 担当
 //   tags    标签数组：[互动项目, 虎啸奖]
 //   link    外链（“访问作品”按钮）
+//   photos  作品照片数组，**最多 3 张**（超出会被忽略）：
+//             photos: [/works/<slug>/2.jpg, /works/<slug>/3.jpg, /works/<slug>/4.jpg]
+//           放在正文末尾渲染成一条可点开放大的图带；
+//           不写 photos 就整段不渲染（不影响只有 banner 的老详情页）。
 // 正文（frontmatter 之后）写 markdown：文字 / 图 ![](...) / 视频 <video src=...>。
 //
 // 资源（图/视频）放到 public/works/ 下，用 /works/... 绝对路径引用。
@@ -26,8 +30,13 @@ export interface WorkDoc {
   role?: string
   tags?: string[]
   link?: string
+  /** 作品照片（最多 3 张，超出忽略）。渲染在正文末尾的可点开放大图带。 */
+  photos?: string[]
   body: string
 }
+
+/** 每个作品最多展示的照片数 —— 需求方定死 3 张，别再放开。 */
+export const MAX_PHOTOS = 3
 
 // 构建期把全部 md 作为原始字符串内联进来
 const files = import.meta.glob('../content/works/*.md', {
