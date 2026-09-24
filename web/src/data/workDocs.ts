@@ -15,7 +15,12 @@
 // 正文（frontmatter 之后）写 markdown：文字 / 图 ![](...) / 视频 <video src=...>。
 //
 // 资源（图/视频）放到 public/works/ 下，用 /works/... 绝对路径引用。
+//   解析统一交给 assetUrl()：上线到子路径（GitHub Pages 的 /Resume/）时，
+//   裸的 '/works/...' 会被浏览器指到**域名根**而 404 —— 详情页图片整片空白。
+//   本地 dev 是根路径部署，看不出这个毛病，所以别在本地只看一眼就认为没问题。
 // 列表（works.ts 的 item）通过 `slug` 关联到此处的 md；没有 slug 的 item 仍走占位详情。
+
+import { assetUrl } from './assets'
 
 export interface WorkDoc {
   slug: string
@@ -76,7 +81,11 @@ const docs: Record<string, WorkDoc> = {}
 for (const path in files) {
   const slug = path.split('/').pop()!.replace(/\.md$/, '')
   const { data, body } = parseFrontmatter(files[path])
-  docs[slug] = { slug, ...data, body } as WorkDoc
+  const doc = { slug, ...data, body } as WorkDoc
+  // frontmatter 里的资源路径补上 vite base（子路径部署才不会 404）
+  if (doc.banner) doc.banner = assetUrl(doc.banner)
+  if (doc.photos) doc.photos = doc.photos.map((p) => assetUrl(p))
+  docs[slug] = doc
 }
 
 export function getWorkDoc(slug?: string): WorkDoc | null {

@@ -1,13 +1,28 @@
 import { useEffect, useRef, useState, type Ref } from 'react'
 import { createPortal } from 'react-dom'
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion'
-import ReactMarkdown from 'react-markdown'
+import ReactMarkdown, { type Components } from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import rehypeRaw from 'rehype-raw'
 import { WORKS, SECTION_COVERS, type WorkListItem, type WorkSection, type WorksLang } from '../data/works'
 import { getWorkDoc, MAX_PHOTOS } from '../data/workDocs'
+import { assetUrl } from '../data/assets'
 
 const EASE = [0.22, 1, 0.36, 1]
+
+// markdown 正文里的图/视频也走 assetUrl —— 正文写 `![](/works/...)` 时，
+// 部署在子路径下同样会指到域名根而 404（frontmatter 的 banner/photos 已在 workDocs 里处理）。
+const MD_COMPONENTS: Components = {
+  img({ src, ...rest }) {
+    return <img {...rest} src={assetUrl(typeof src === 'string' ? src : '')} />
+  },
+  video({ src, ...rest }) {
+    return <video {...rest} src={typeof src === 'string' ? assetUrl(src) : undefined} />
+  },
+  source({ src, ...rest }) {
+    return <source {...rest} src={typeof src === 'string' ? assetUrl(src) : undefined} />
+  },
+}
 
 // 复制到剪贴板。优先用异步 Clipboard API —— 但它只在安全上下文可用
 // （localhost / https 算安全；用局域网 IP 打开的开发机、http 域名都不算），
@@ -337,7 +352,11 @@ function WorkDetail({
 
           {doc && doc.body ? (
             <div className="wk-md">
-              <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>
+              <ReactMarkdown
+                remarkPlugins={[remarkGfm]}
+                rehypePlugins={[rehypeRaw]}
+                components={MD_COMPONENTS}
+              >
                 {doc.body}
               </ReactMarkdown>
             </div>
